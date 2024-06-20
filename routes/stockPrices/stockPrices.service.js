@@ -32,13 +32,14 @@ class StockService {
     }
 
     async updateStockPrice(symbol) {
-        const price = await this.getStockPrice(symbol);
-        let stock = await stockRepository.findBySymbol(symbol);
-        if (stock) {
-            stock.price = price;
-            stock = await stockRepository.save(stock);
+        const possbile_data = await this.getStockPrice(symbol);
+        if (possbile_data.results[0].c) {
+            let stock = await stockRepository.findBySymbol(symbol);
+            if (stock) {
+                stock.price = possbile_data.results[0].c;
+                await stockRepository.save(stock);
+            }
         }
-        return stock;
     }
 
     transformStockData(stock) {

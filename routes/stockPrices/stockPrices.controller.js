@@ -19,36 +19,50 @@ class StockController {
             return res.status(400).json({ error: 'Must have at most 2 stocks' })
         }
         stock = Array.isArray(stock) ? stock.map(s => s.toUpperCase()) : stock.toUpperCase();
+        like = like === 'true';
 
         let stockData;
-        like = like === 'true';
         if (Array.isArray(stock)) {
-            stockData = await Promise.all(stock.map(async (symbol) => {
-                if (like) {
-                    return await likeLimiter(req, res, async () => {
-                        return await stockService.likeStock(symbol);
-                    });
-                } else {
-                    return await stockService.viewStock(symbol);
-                }
+            if (like) {
+                await Promise.all(stock.map(async (symbol) => {
 
+                    await new Promise((resolve, reject) => {
+                        likeLimiter(req, res, async (err) => {
+                            if (err) return reject(err instanceof Error ? err : new Error(err));
+                            try {
+                                await stockService.likeStock(symbol)
+                                resolve()
+                            } catch (e) {
+                                reject(e instanceof Error ? e : new Error(e));
+                            }
+                        })
+                    });
+                }));
+            }
+            stockData = await Promise.all(stock.map(async (symbol) => {
+                return await stockService.viewStock(symbol);
             }));
+
             stockData[0].rel_likes = stockData[0].likes - stockData[1].likes
             stockData[1].rel_likes = stockData[1].likes - stockData[0].likes
             delete stockData[0].likes
             delete stockData[1].likes
         } else if (like) {
-            stockData = await likeLimiter(req, res, async () => {
-                return await stockService.likeStock(stock);
+            await new Promise((resolve, reject) => {
+                likeLimiter(req, res, async (err) => {
+                    if (err) return reject(err instanceof Error ? err : new Error(err));
+                    try {
+                        await stockService.likeStock(stock)
+                        resolve()
+                    } catch (e) {
+                        reject(e instanceof Error ? e : new Error(e));
+                    }
+                })
             });
+            stockData = await stockService.viewStock(stock);
         } else {
             stockData = await stockService.viewStock(stock);
         }
-
-        // Update prices for all stocks fetched
-        // await Promise.all(stock.map(async (symbol) => {
-        //     await stockService.updateStockPrice(symbol);
-        // }));
 
         res.json({ stockData });
     }

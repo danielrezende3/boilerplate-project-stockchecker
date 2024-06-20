@@ -8,7 +8,7 @@ chai.use(chaiHttp);
 suite('Functional Tests', function () {
     this.timeout(5000); // Increase timeout if requests take longer
 
-    // Viewing one stock
+    // // Viewing one stock
     // test('GET request to /api/stock-prices/ with single stock', function (done) {
     //     chai.request(server)
     //         .get('/api/stock-prices/')
@@ -21,7 +21,7 @@ suite('Functional Tests', function () {
     //         });
     // });
 
-    // Viewing one stock and liking it
+    // // Viewing one stock and liking it
     // test('GET request to /api/stock-prices/ with single stock and like', function (done) {
     //     chai.request(server)
     //         .get('/api/stock-prices/')
@@ -35,7 +35,7 @@ suite('Functional Tests', function () {
     //         });
     // });
 
-    // Viewing the same stock and liking it again
+    // // Viewing the same stock and liking it again
     // test('GET request to /api/stock-prices/ with single stock and like again', function (done) {
     //     chai.request(server)
     //         .get('/api/stock-prices/')
@@ -48,7 +48,7 @@ suite('Functional Tests', function () {
     //         });
     // });
 
-    // Viewing two stocks
+    // // Viewing two stocks
     // test('GET request to /api/stock-prices/ with two stocks', function (done) {
     //     chai.request(server)
     //         .get('/api/stock-prices/')
@@ -61,7 +61,7 @@ suite('Functional Tests', function () {
     //         });
     // });
 
-    // Viewing two stocks and liking them
+    // // Viewing two stocks and liking them
     // test('GET request to /api/stock-prices/ with two stocks and like', function (done) {
     //     chai.request(server)
     //         .get('/api/stock-prices/')
