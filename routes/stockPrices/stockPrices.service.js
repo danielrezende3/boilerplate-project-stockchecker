@@ -1,13 +1,14 @@
 const stockRepository = require('./stockPrices.repository');
 const Stock = require("./stockPrices.model")
 const axios = require('axios');
+
 class StockService {
     async viewStock(symbol) {
         let stock = await stockRepository.findBySymbol(symbol);
         if (!stock) {
             stock = await stockRepository.save(new Stock({ stock: symbol }));
         }
-        return stock;
+        return this.transformStockData(stock);
     }
 
     async likeStock(symbol) {
@@ -16,20 +17,20 @@ class StockService {
             stock = await stockRepository.save(new Stock({ stock: symbol }));
         }
         stock = await stockRepository.incrementLikes(symbol);
-        return stock;
+        return this.transformStockData(stock);
     }
 
     async getStockPrice(symbol) {
-        const apiUrl = `https://stock-price-checker-proxy.freecodecamp.rocks/v1/stock/${symbol}/quote`;
+        const apiUrl = `https://api.polygon.io/v2/aggs/ticker/${symbol}/prev?adjusted=true&apiKey=${process.env.POLYGON_API_KEY}`;
 
         try {
             const response = await axios.get(apiUrl);
-            // Parse the response and return relevant data
-            return response.data.previousClose; // Adjust this based on the API response structure
+            return response.data;
         } catch (error) {
             throw new Error(`Failed to fetch stock data for ${symbol}`);
         }
     }
+
     async updateStockPrice(symbol) {
         const price = await this.getStockPrice(symbol);
         let stock = await stockRepository.findBySymbol(symbol);
@@ -38,6 +39,14 @@ class StockService {
             stock = await stockRepository.save(stock);
         }
         return stock;
+    }
+
+    transformStockData(stock) {
+        return {
+            price: stock.price,
+            stock: stock.stock,
+            likes: stock.likes
+        };
     }
 }
 
