@@ -38,9 +38,9 @@ class StockController {
         }
 
         // Update prices for all stocks fetched
-        // await Promise.all(stock.map(async (symbol) => {
-        //     await stockService.updateStockPrice(symbol);
-        // }));
+        await Promise.all(stock.map(async (symbol) => {
+            await stockService.updateStockPrice(symbol);
+        }));
 
         res.json({ stockData });
     }
