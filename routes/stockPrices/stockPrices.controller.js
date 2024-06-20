@@ -3,7 +3,7 @@ const stockService = require('./stockPrices.service');
 // Rate limiting setup
 const rateLimit = require('express-rate-limit');
 const likeLimiter = rateLimit({
-    windowMs: 5, // 1 minute 60 * 1000
+    windowMs: 60 * 1000, // 1 minute 60 * 1000
     max: 1, // limit each IP to 1 like request per windowMs
     message: { "error": "Too many like requests from this IP, please try again later." }
 });
