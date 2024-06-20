@@ -7,6 +7,7 @@ const mongoose = require("mongoose")
 const routes = require('./routes/routes');
 const fccTestingRoutes = require('./routes/fcctesting.js');
 const runner = require('./test-runner');
+const helmet = require("helmet")
 const MONGODB_URI = process.env.MONGODB_URI
 const app = express();
 
@@ -35,7 +36,14 @@ app.use(function (req, res, next) {
     .type('text')
     .send('Not Found');
 });
-
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"], // Default policy for loading content. 'self' refers to the current origin.
+    scriptSrc: ["'self'"], // Only allow scripts from the current origin
+    styleSrc: ["'self'"], // Only allow styles from the current origin
+    // Add other content types as needed
+  },
+}));
 //Start our server and tests!
 
 
